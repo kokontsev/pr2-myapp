@@ -1,18 +1,12 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
-	"time"
 
+	"github.com/kokontsev/myapp/internal/app/handlers"
 	"github.com/kokontsev/myapp/utils"
 )
-
-type pingResp struct {
-	Status string `json:"status"`
-	Time   string `json:"time"`
-}
 
 func withRequestID(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -34,14 +28,7 @@ func Run() {
 		fmt.Fprintln(w, "Hello, Go project structure!")
 	})
 
-	mux.HandleFunc("/ping", func(w http.ResponseWriter, r *http.Request) {
-		utils.LogRequest(r)
-		w.Header().Set("Content-Type", "application/json; charset=utf-8")
-		_ = json.NewEncoder(w).Encode(pingResp{
-			Status: "ok",
-			Time:   time.Now().UTC().Format(time.RFC3339),
-		})
-	})
+	mux.HandleFunc("/ping", handlers.Ping)
 
 	mux.HandleFunc("/fail", func(w http.ResponseWriter, r *http.Request) {
 		utils.LogRequest(r)
